@@ -12,11 +12,23 @@
 # Add all the code inside the folder "app", with a requirements.txt file.
 # Modify the variables below as needed.
 
-AWS_EXEC=~/code/aws-ware/aws-cli/aws
-APP_NAME=DashWebApp
+AWS_EXEC=~/localcode/aws-ware/aws-cli/aws
+APP_NAME=ExplainerApp6
 PORT=8050
-AMI_ID=ami-02d7ced41dff52ebc
-APP_FILE=dashboard.py
+AMI_ID=ami-0b6c6ebed2801a5cb
+APP_FILE=app.py
+
+set -euo pipefail
+
+if ! command -v "$AWS_EXEC" >/dev/null 2>&1; then
+    echo "Error: aws executable not found at $AWS_EXEC"
+    exit 1
+fi
+
+${AWS_EXEC} sts get-caller-identity >/dev/null 2>&1 || {
+    echo "AWS credentials invalid or expired. Do aws login"
+    exit 1
+}
 
 ${AWS_EXEC} ec2 create-key-pair \
     --key-name ${APP_NAME}_key \
